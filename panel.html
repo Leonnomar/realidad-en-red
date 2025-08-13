@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel - Realidad en Red</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="sidebar">
+        <h2>REALIDAD EN RED</h2>
+        <a href="#">📄 Publicar nuevo</a>
+        <a href="#">🗂 Mis publicaciones</a>
+        <a href="#">🖼 Galería de imágenes</a>
+        <a href="#">⚙ Configuración</a>
+    </div>
+
+    <div class="main">
+        <div class="top-bar">
+            <span></span>
+            <a href="index.html">Cerrar sesión</a>
+        </div>
+
+        <h1>Nuevo artículo</h1>
+
+        <form>
+            <label>Título</label>
+            <input type="text" required>
+
+            <label>Categoría</label>
+            <select>
+                <option>Seleccionar categoría</option>
+                <option>Política</option>
+                <option>Sociedad</option>
+                <option>Deportes</option>
+                <option>Internacional</option>
+                <option>Cultura</option>
+                <option>Opinión</option>
+            </select>
+
+            <label>Imagen destacada</label>
+            <input type="file">
+
+            <label>Etiquetas</label>
+            <input type="text" placeholder="Separadas por comas">
+
+            <label>Contenido</label>
+            <textarea rows="10"></textarea>
+
+            <div class="estado">
+                <label><input type="radio" name="estado"> Borrador</label>
+                <label><input type="radio" name="estado"> Publicar ahora</label>
+            </div>
+
+            <button type="submit" class="borrador">Guardar borrador</button>
+            <button type="submit" class="publicar">Publicar</button>
+        </form>
+    </div>
+</body>
+</html>
