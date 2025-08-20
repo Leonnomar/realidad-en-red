@@ -11,7 +11,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (!empty($_FILES["imagen"]["name"])) {
         $imagenNombre = basename($_FILES["imagen"]["name"]);
         $rutaDestino = "img/" . $imagenNombre;
-        move_uploaded_file($_FILES["imagen"]["tmp_name"], $rutaDestino)
+        move_uploaded_file($_FILES["imagen"]["tmp_name"], $rutaDestino);
     }
 
     // Insertar en la base de datos

@@ -12,7 +12,7 @@ if (!empty($_FILES['imagen']['name'])) {
         mkdir($carpeta, 0777, true);
     }
     $imagen = $carpeta . basename($_FILES["imagen"]["name"]);
-    move_uploaded_file($_FILES["imagen"]["tmp_name"], $imagen)
+    move_uploaded_file($_FILES["imagen"]["tmp_name"], $imagen);
 }
 
 $sql = "INSERT INTO articulos (titulo, contenido, imagen) VALUES (?, ?, ?)";

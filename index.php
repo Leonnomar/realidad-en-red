@@ -27,10 +27,10 @@
                     }
                     echo "<p>" . nl2br(htmlspecialchars($fila['contenido'])) . "</p>";
                     echo "<small>Publicado el " . $fila['fecha'] . "</small>";
-                    echo "</article>"
+                    echo "</article>";
                 }
             } else {
-                echo "<p>No hay artículos publicados.</p>"
+                echo "<p>No hay artículos publicados.</p>";
             }
             ?>
         </main>
