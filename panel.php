@@ -1,60 +1,63 @@
 <?php
-// Incluimos la conexión
-include 'conexion.php';
-
-// Si se envió el formulario
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $titulo = $_POST['titulo'];
-    $contenido = $_POST['contenido'];
-
-    // Guardar imagen si se sube
-    $imagen = "";
-    if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] == 0) {
-        $carpeta = "img/";
-        $imagen = $carpeta . basename($_FILES["imagen"]["name"]);
-        move_uploaded_file($_FILES["imagen"]["tmp_name"], $imagen);
-    }
-
-    // Insertar en la base de datos
-    $sql = "INSERT INTO articulos (titulo, contenido, imagen, fecha) 
-            VALUES ('$titulo', '$contenido', '$imagen', NOW())";
-
-    if ($conn->query($sql) === TRUE) {
-        header("Location: panel.php?success=1");
-        exit();
-    } else {
-        echo "<p style='color:red'>❌ Error: " . $conn->error . "</p>";
-    }
+// Conexión a la base de datos
+$conexion = new mysqli("localhost","root","","realidadenred");
+if ($conexion->connect_error) {
+    die("Error de conexión". $conexion->connect_error);
 }
-?>
 
-<?php if (isset($_GET['success'])): ?>
-    <p style="color:green">✅ Artículo publicado correctamente.</p>
-<?php endif; ?>
+// Si se recibe in id por GET para borrar
+if (isset($_GET['eliminar'])) {
+    $id = intval($_GET['eliminar']);
+    $conexion->query("DELETE FROM articulos WHERE id = $id");
+    header("Location: panel.php"); // Recarga la página después de borrar
+    exit;
+}
+
+// Obtener todos los artículos
+$resultado = $conexion->query("SELECT * FROM articulos ORDER BY fecha DESC");
+?>
 
 <!DOCTYPE html>
 <html lang="es">
     <head>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Panel de Publicación</title>
-        <link rel="stylesheet" href="css/style.css">
+        <title>Panel de Administración</title>
+        <style>
+            body { font-family: Arial, sans-serif; padding: 20px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+            th, td { padding: 10px; border: 1px solid #ccc; text-align: left; }
+            th { background-color: #f4f4f4; }
+            a { text-decoration: none; padding: 5px 10px; border-radius: 4px; }
+            .borrar { background-color: red; color: white; }
+            .editar { background-color: orange; color: white; }
+        </style>
     </head>
     <body>
-        <h1>📢 Publicar nuevo artículo</h1>
+        <h1>Panel de Administración</h1>
+        <a href="nuevo.php">➕ Nuevo Artículo</a>
 
-
-        <form action="panel.php" method="POST" enctype="multipart/form-data">
-            <label>Título:</label><br>
-            <input type="text" name="titulo" required><br><br>
-
-            <label>Contenido:</label><br>
-            <textarea name="contenido" rows="6" required></textarea><br><br>
-
-            <label>Imagen:</label>
-            <input type="file" name="imagen"><br><br>
-
-            <button type="submit">📌 Publicar</button>
-        </form>
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Título</th>
+                <th>Contenido</th>
+                <th>Imagen</th>
+                <th>Fecha</th>
+                <th>Acciones</th>
+            </tr>
+            <?php while ($fila = $resultado->fetch_assoc()): ?>
+                <tr>
+                    <td><?= $fila['id'] ?></td>
+                    <td><?= $fila['titulo'] ?></td>
+                    <td><?= $fila['contenido'] ?></td>
+                    <td><img src="<?= $fila['imagen'] ?>" width="80"></td>
+                    <td><?= $fila['fecha'] ?></td>
+                    <td>
+                        <a class="editar" href="editar.php?id=<?= $fila['id'] ?>">Editar</a>
+                        <a class="borrar" href="panel.php?eliminar=<?= $fila['id'] ?>" onclick="return confirm('¿Seguro que deseas borrar este artículo?')">Borrar</a>
+                    </td>
+                </tr>
+                <?php endwhile; ?>
+        </table>
     </body>
 </html>
