@@ -1,4 +1,8 @@
-<?php include 'conexion.php'; ?>
+<?php include 'conexion.php';
+
+$sql = "SELECT id, titulo, contenido, imagen, fecha FROM articulos ORDER BY fecha DESC";
+$resultado = $conn->query($sql);
+?>
 
 <!DOCTYPE html>
 <html lang="es">
@@ -9,30 +13,20 @@
         <link rel="stylesheet" href="css/style.css">
     </head>
     <body>
-        <header>
-            <h1>Realidad en Red</h1>
-        </header>
-
-        <main>
-            <?php
-            $sql = "SELECT titulo, contenido, imagen, fecha FROM articulos ORDER BY fecha DESC";
-            $resultado = $conn->query($sql);
-
-            if ($resultado->num_rows > 0) {
-                while ($fila = $resultado->fetch_assoc()) {
-                    echo "<article>";
-                    echo "<h2>" . htmlspecialchars($fila['titulo']) . "</h2>";
-                    if (!empty($fila['imagen'])) {
-                        echo "<img src='img/" . htmlspecialchars($fila['imagen']) . "' alt='Imagen del artículo'>";
-                    }
-                    echo "<p>" . nl2br(htmlspecialchars($fila['contenido'])) . "</p>";
-                    echo "<small>Publicado el " . $fila['fecha'] . "</small>";
-                    echo "</article>";
-                }
-            } else {
-                echo "<p>No hay artículos publicados.</p>";
-            }
-            ?>
-        </main>
+        <?php  if ($resultado->num_rows > 0): ?>
+            <?php while ($fila = $resultado->fetch_assoc()): ?>
+                <div class="articulo">
+                    <h2><?php echo htmlspecialchars($fila['titulo']); ?></h2>
+                    <small>Publica el: <?php echo date("d/m/Y H:i", strtotime($fila['fecha'])); ?></small>
+                    <p><?php echo nl2br(htmlspecialchars($fila['contenido'])); ?></p>
+                    <?php if (!empty($fila['imagen'])): ?>
+                        <img src="<?php echo $fila['imagen']; ?>" alt="Imagen del artículo" width="300">
+                    <?php endif; ?>
+                </div>
+                <hr>
+            <?php endwhile; ?>
+        <?php else: ?>
+            <p>No hay artículos publicados todavía.</p>
+        <?php endif; ?>
     </body>
 </html>
