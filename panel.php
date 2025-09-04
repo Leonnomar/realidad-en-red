@@ -1,4 +1,9 @@
 <?php
+session_start();
+if (!isset($_SESSION['usuario'])) {
+    header("Location: login.php");
+    exit;
+}
 // Conexión a la base de datos
 $conn = new mysqli("localhost","root","","realidadenred");
 if ($conn->connect_error) {
@@ -77,5 +82,6 @@ $resultado = $conn->query("SELECT * FROM articulos ORDER BY fecha DESC");
                 </tr>
                 <?php endwhile; ?>
         </table>
+        <a href="logout.php">Cerrar sesión</a>
     </body>
 </html>
