@@ -1,20 +1,38 @@
 <?php
 // Conexión a la base de datos
-$conexion = new mysqli("localhost","root","","realidadenred");
-if ($conexion->connect_error) {
-    die("Error de conexión". $conexion->connect_error);
+$conn = new mysqli("localhost","root","","realidadenred");
+if ($conn->connect_error) {
+    die("Error de conexión". $conn->connect_error);
 }
 
 // Si se recibe in id por GET para borrar
 if (isset($_GET['eliminar'])) {
     $id = intval($_GET['eliminar']);
-    $conexion->query("DELETE FROM articulos WHERE id = $id");
-    header("Location: panel.php"); // Recarga la página después de borrar
+
+    //1. Buscar la imagen asociada
+    $stmt = $conn->prepare("SELECT imagen FROM articulos WHERE id = ?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $resultado = $stmt->get_result();
+    $articulo = $resultado->fetch_assoc();
+
+    // 2. Eliminar la imagen del servidor si existe
+    if (!empty($articulo['imagen']) && file_exists("img/" . $articulo['imagen'])) {
+        unlink("img/". $articulo['imagen']);
+    }
+
+    // 3. Borrar el artículo de la base de datos
+    $stmt = $conn->prepare("DELETE FROM articulos WHERE id = ?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+
+    // 4. Redirigir al panel
+    header("Location: panel.php");
     exit;
 }
 
 // Obtener todos los artículos
-$resultado = $conexion->query("SELECT * FROM articulos ORDER BY fecha DESC");
+$resultado = $conn->query("SELECT * FROM articulos ORDER BY fecha DESC");
 ?>
 
 <!DOCTYPE html>
