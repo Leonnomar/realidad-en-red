@@ -18,6 +18,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Verificar contraseña con password_verify
         if (password_verify($password, $fila['password'])) {
             $_SESSION['usuario'] = $fila['usuario'];
+            $_SESSION['rol'] = $fila['rol'];
             header("Location: panel.php");
             exit;
         } else {

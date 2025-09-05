@@ -56,7 +56,14 @@ $resultado = $conn->query("SELECT * FROM articulos ORDER BY fecha DESC");
         </style>
     </head>
     <body>
-        <h1>Panel de Administración</h1>
+        <header style="display:flex; justify-content:space-between; align-items: center; margin-bottom: 20px;">
+            <h1>Panel de Administración</h1>
+            <div>
+                <span>Bienvenido, <?= $_SESSION['usuario'] ?></span>
+                <a href="logout.php" style="margin-left: 15px; background: red; color: white; padding: 5px 10px; border-radius:5px; text-decoration: none;">Cerrar sesión</a>
+            </div>
+        </header>
+        
         <a href="nuevo.php">➕ Nuevo Artículo</a>
 
         <table>
@@ -82,6 +89,5 @@ $resultado = $conn->query("SELECT * FROM articulos ORDER BY fecha DESC");
                 </tr>
                 <?php endwhile; ?>
         </table>
-        <a href="logout.php">Cerrar sesión</a>
     </body>
 </html>
