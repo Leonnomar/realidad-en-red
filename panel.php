@@ -44,50 +44,89 @@ $resultado = $conn->query("SELECT * FROM articulos ORDER BY fecha DESC");
 <html lang="es">
     <head>
         <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
         <title>Panel de Administración</title>
-        <style>
-            body { font-family: Arial, sans-serif; padding: 20px; }
-            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-            th, td { padding: 10px; border: 1px solid #ccc; text-align: left; }
-            th { background-color: #f4f4f4; }
-            a { text-decoration: none; padding: 5px 10px; border-radius: 4px; }
-            .borrar { background-color: red; color: white; }
-            .editar { background-color: orange; color: white; }
-        </style>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     </head>
-    <body>
-        <header style="display:flex; justify-content:space-between; align-items: center; margin-bottom: 20px;">
-            <h1>Panel de Administración</h1>
-            <div>
-                <span>Bienvenido, <?= $_SESSION['usuario'] ?></span>
-                <a href="logout.php" style="margin-left: 15px; background: red; color: white; padding: 5px 10px; border-radius:5px; text-decoration: none;">Cerrar sesión</a>
-            </div>
-        </header>
-        
-        <a href="nuevo.php">➕ Nuevo Artículo</a>
+    <body class="bg-light">
 
-        <table>
-            <tr>
-                <th>ID</th>
-                <th>Título</th>
-                <th>Contenido</th>
-                <th>Imagen</th>
-                <th>Fecha</th>
-                <th>Acciones</th>
-            </tr>
-            <?php while ($fila = $resultado->fetch_assoc()): ?>
-                <tr>
-                    <td><?= $fila['id'] ?></td>
-                    <td><?= $fila['titulo'] ?></td>
-                    <td><?= $fila['contenido'] ?></td>
-                    <td><img src="<?= $fila['imagen'] ?>" width="80"></td>
-                    <td><?= $fila['fecha'] ?></td>
-                    <td>
-                        <a class="editar" href="editar.php?id=<?= $fila['id'] ?>">Editar</a>
-                        <a class="borrar" href="panel.php?eliminar=<?= $fila['id'] ?>" onclick="return confirm('¿Seguro que deseas borrar este artículo?')">Borrar</a>
-                    </td>
-                </tr>
-                <?php endwhile; ?>
-        </table>
+        <!-- NAVBAR -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand fw-bold" href="panel.php">⚙️ Panel de Administración</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <?php if ($_SESSION['rol'] === 'admin'): ?>
+                            <li class="nav-item"><a class="nav-link" href="usuarios.php">👤 Usuarios</a></li>
+                        <?php endif; ?>
+                        <li class="nav-item"><a class="nav-link" href="logout.php">Cerrar sesión</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        
+        <!-- CONTENIDO -->
+        <div class="container my-5">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="text-primary">Artículos</h1>
+                <a href="nuevo.php" class="btn btn-success">➕ Nuevo Artículo</a>
+            </div>
+
+            <?php if (isset($_SESSION['alerta'])): ?>
+                <div class="alert alert-<?= $_SESSION['alerta']['tipo'] ?> alert-dismissible fade show" role="alert">
+                    <?= $_SESSION['alerta']['mensaje'] ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                <?php unset($_SESSION['alerta']); ?>
+            <?php endif; ?>
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Título</th>
+                            <th>Contenido</th>
+                            <th>Imagen</th>
+                            <th>Fecha</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php while ($fila = $resultado->fetch_assoc()): ?>
+                            <tr>
+                                <td><?= $fila['id'] ?></td>
+                                <td><?= $fila['titulo'] ?></td>
+                                <td><?= substr($fila['contenido'], 0, 50) ?>...</td>
+                                <td>
+                                    <?php if (!empty($fila['imagen'])): ?>
+                                        <img src="<?= $fila['imagen'] ?>" width="80" class="img-thumbnail">
+                                    <?php endif; ?>
+                                </td>
+                                <td><?= $fila['fecha'] ?></td>
+                                <td>
+                                    <a class="btn btn-warning btn-sm" href="editar.php?id=<?= $fila['id'] ?>">✏️ Editar</a>
+                                    <form action="borrar.php" method="POST" style="display:inline;">
+                                        <input type="hidden" name="id" value="<?= $fila['id'] ?>">
+                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Seguro que deseas eliminar este artículo?')">
+                                            🗑 Eliminar
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        <?php endwhile; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- FOOTER -->
+        <footer class="bg-dark text-white text-center py-3 mt-5">
+            <p class="mb-0">© <?= date("Y") ?> Realidad en Red - Panel de Administración</p>
+        </footer>
     </body>
 </html>

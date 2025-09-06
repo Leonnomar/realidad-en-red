@@ -29,6 +29,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Si el admin deja vacío el campo de contraseña, no se actualiza
     if (!empty($_POST['password'])) {
+        if (empty($usuarioNuevo)) {
+            die("El campo usuario no puede estar vacío.");
+        }
+        if (!in_array($rol, ['admin', 'editor'])) {
+            die("Rol inválido.");
+        }
         $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
         $stmt = $conn->prepare("UPDATE usuarios SET usuario = ?, password = ?, rol = ? WHERE id = ?");
         $stmt->bind_param("sssi", $usuarioNuevo, $password, $rol, $id);
@@ -36,7 +42,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt = $conn->prepare("UPDATE usuarios SET usuario = ?, rol = ? WHERE id = ?");
         $stmt->bind_param("ssi", $usuarioNuevo, $rol, $id);
     }
-    $stmt->execute();
+    
+    if ($stmt->execute()) {
+        $_SESSION['mensaje'] = "✅ Usuario actualizado correctamente.";
+        $_SESSION['tipo_mensaje'] = "success";
+    } else {
+        $_SESSION['mensaje'] = "❌ Error al actualizar el usuario.";
+        $_SESSION['tipo_mensaje'] = "danger";
+    }
 
     header("Location: usuarios.php");
     exit;

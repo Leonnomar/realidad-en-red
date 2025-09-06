@@ -1,30 +1,67 @@
 <?php
 // nuevo.php
+session_start();
+
+// Si no hay sesión, redirigir
+if (!isset($_SESSION['usuario'])) {
+    header("Location: index.php");
+    exit();
+}
 ?>
 
 <!DOCTYPE html>
 <html lang="es">
     <head>
         <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Nuevo Artículo</title>
-        <link rel="stylesheet" href="style.css"> <!-- tu CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     </head>
-    <body>
-        <h1>Crear nuevo artículo</h1>
+    <body class="bg-light">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="panel.php">⚙️ Panel de Administración</a>
+                <div class="d-flex">
+                    <a href="logout.php" class="btn btn-outline-light">Cerrar sesión</a>
+                </div>
+            </div>
+        </nav>
 
-        <form action="guardar.php" method="POST" enctype="multipart/form-data">
-            <label for="titulo">Título:</label><br>
-            <input type="text" name="titulo" id="titulo" required><br><br>
+        <div class="container mt-5">
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    
+                    <div class="card shadow-lg">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">Crear Nuevo Artículo</h5>
+                        </div>
+                        <div class="card-body">
+                            <form action="guardar.php" method="POST" enctype="multipart/form-data">
+                                <div class="mb-3">
+                                    <label for="titulo" class="form-label">Título:</label>
+                                    <input type="text" class="form-control" id="titulo" name="titulo" required>
+                                </div>
 
-            <label for="contenido">Contenido:</label><br>
-            <textarea name="contenido" id="contenido" rows="6" required></textarea><br><br>
+                                <div class="mb-3">
+                                    <label for="contenido" class="form-label">Contenido:</label>
+                                    <textarea class="form-control" id="contenido" name="contenido" rows="6" required></textarea>
+                                </div>
 
-            <label for="imagen">Imagen (opcional):</label><br>
-            <input type="file" name="imagen" id="imagen" accept="image/*"><br><br>
+                                <div class="mb-3">
+                                    <label for="imagen" class="form-label">Imagen (opcional):</label>
+                                    <input type="file" class="form-control" id="imagen" name="imagen" accept="image/*">
+                                </div>
 
-            <button type="submit">Guardar Artículo</button>
-        </form>
+                                <button type="submit" class="btn btn-success w-100">Guardar Artículo</button>
+                            </form>
+                        </div>
+                    </div>
 
-        <p><a href="panel.php">⬅ Volver al panel</a></p>
+                </div>
+            </div>
+        </div>
+
+       
     </body>
 </html>

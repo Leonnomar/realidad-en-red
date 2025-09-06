@@ -13,7 +13,7 @@ if (empty($titulo) || empty($contenido)) {
 // Manejo de imagen
 $imagen = null;
 if (!empty($_FILES['imagen']['name'])) {
-    $carpeta = "uploads/";
+    $carpeta = "img/";
     if (!file_exists($carpeta)) {
         mkdir($carpeta, 0777, true);
     }
