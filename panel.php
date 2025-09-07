@@ -38,6 +38,7 @@ if (isset($_GET['eliminar'])) {
 
 // Obtener todos los artículos
 $resultado = $conn->query("SELECT * FROM articulos ORDER BY fecha DESC");
+
 ?>
 
 <!DOCTYPE html>

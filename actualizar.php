@@ -8,13 +8,13 @@ include "conexion.php";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $id = $_POST['id'];
-    $titulo = mysql_real_escape_string($conn, $_POST['titulo']);
-    $contenido = mysql_real_escape_string($conn, $_POST['contenido']);
+    $titulo = mysqli_real_escape_string($conn, $_POST['titulo']);
+    $contenido = mysqli_real_escape_string($conn, $_POST['contenido']);
 
     // Buscar el artículo actual para saber si tiene imagen
     $sql = "SELECT imagen FROM articulos WHERE id = $id";
-    $resultado = mysql_query($conn,$sql);
-    $articulo = mysql_fetch_array($resultado);
+    $resultado = mysqli_query($conn,$sql);
+    $articulo = mysqli_fetch_array($resultado);
     $imagen_actual = $articulo['imagen'];
 
     // Manejo de nueva imagen
@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Actualizar en BD
     $sql_update = "UPDATE articulos SET titulo='$titulo', contenido='$contenido', imagen='$imagen_final' WHERE id=$id";
-    if (mysql_query($conn, $sql_update)) {
+    if (mysqli_query($conn, $sql_update)) {
         $_SESSION['alerta'] = ['tipo' => 'success', 'mensaje' => 'Artículo actualizado correctamente'];
     } else {
         $_SESSION['alerta'] = ['tipo'=> 'danger', 'mensaje' => 'Error al actualizar el artículo'];
