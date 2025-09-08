@@ -6,6 +6,12 @@ $busqueda = "";
 $fecha = "";
 $where = [];
 $sql = "SELECT * FROM articulos";
+$fechasPublicadas = [];
+
+$resFechas = $conn->query("SELECT DISTINCT DATE(fecha) as fecha FROM articulos");
+while ($row = $resFechas->fetch_assoc()) {
+    $fechasPublicadas[] = $row['fecha'];
+}
 
 // Si hay texto
 if (isset($_GET['buscar']) && !empty($_GET['buscar'])) {
@@ -47,6 +53,8 @@ function resaltar($texto, $busqueda) {
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     </head>
     <body class="bg-light">
 
@@ -77,7 +85,7 @@ function resaltar($texto, $busqueda) {
                         <input type="text" name="buscar" class="form-control form-control-sm" placeholder="Buscar" value="<?= htmlspecialchars($busqueda) ?>">
                     </div>
                     <div class="col-auto">
-                        <input type="date" name="fecha" class="form-control form-control-sm" value="<?= htmlspecialchars($fecha) ?>">
+                        <input type="text" id="fecha" name="fecha" class="form-control form-control-sm" placeholder="Selecciona fecha">
                     </div>
                     <div class="col-auto">
                         <button class="btn btn-primary btn-sm" type="submit">
@@ -145,6 +153,28 @@ function resaltar($texto, $busqueda) {
                     document.querySelector('input[name="fecha"]').value = "";
                 }
             }
+            document.addEventListener("DOMContentLoaded", function() {
+                let fechasPublicadas = <?= json_encode($fechasPublicadas) ?>;
+
+                flatpickr("#fecha", {
+                    dateFormat: "Y-m-d",
+                    disable: [
+                        function(date) {
+                            // Deshabilita días que NO estén en publicaciones
+                            let d = date.toISOString().split('T')[0];
+                            return !fechasPublicadas.includes(d);
+                        }
+                    ],
+                    onDayCreate: function(dObj, dStr, fp, dayElem) {
+                        let d = dayElem.dateObj.toISOString().split('T')[0];
+                        if (fechasPublicadas.includes(d)) {
+                            dayElem.style.backgroundColor = "#0d6efd"; // azul bootstrap
+                            dayElem.style.color = "white";
+                            dayElem.style.borderRadius = "50%";
+                        }
+                    }
+                });
+            });
         </script>
     </body>
 </html>
