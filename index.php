@@ -3,19 +3,29 @@ include 'conexion.php';
 
 // Verificar si hay búsqueda
 $busqueda = "";
-$resultado = null;
+$fecha = "";
+$where = [];
+$sql = "SELECT * FROM articulos";
 
+// Si hay texto
 if (isset($_GET['buscar']) && !empty($_GET['buscar'])) {
     $busqueda = trim($_GET['buscar']);
     $busquedaSQL = $conn->real_escape_string($busqueda);
-
-    $sql = "SELECT * FROM articulos WHERE titulo LIKE '%$busqueda%' OR contenido LIKE '%$busqueda%' ORDER BY fecha DESC";
-    $resultado = mysqli_query($conn, $sql);
-
-    $total = mysqli_num_rows($resultado);
-} else {
-    $sql = "SELECT * FROM articulos ORDER BY fecha DESC";
+    $where[] = "(titulo LIKE '%$busquedaSQL%' OR contenido LIKE '%$busquedaSQL%')";
 }
+
+// Si hay fecha
+if (isset($_GET['fecha']) && !empty($_GET['fecha'])) {
+    $fecha = $_GET['fecha'];
+    $fechaSQL = $conn->real_escape_string($fecha);
+    $where[] = "DATE(fecha) = '$fechaSQL'";
+}
+
+// Armar query final
+if (!empty($where)) {
+    $sql .= " WHERE " . implode(" AND ", $where);
+}
+$sql .= " ORDER BY fecha DESC";
 
 // Ejecutar la consulta
 $resultado = $conn->query($sql);
@@ -63,8 +73,13 @@ function resaltar($texto, $busqueda) {
             <!-- FORMULARIO DE BUSQUEDA -->
             <div class="container my-3">
                 <form method="GET" action="index.php" class="d-flex justify-content-end">
-                    <div class="input-group" style="max-width: 250px;">
-                        <input type="text" name="buscar" class="form-control form-control-sm" placeholder="Buscar">
+                    <div class="col-auto">
+                        <input type="text" name="buscar" class="form-control form-control-sm" placeholder="Buscar" value="<?= htmlspecialchars($busqueda) ?>">
+                    </div>
+                    <div class="col-auto">
+                        <input type="date" name="fecha" class="form-control form-control-sm" value="<?= htmlspecialchars($fecha) ?>">
+                    </div>
+                    <div class="col-auto">
                         <button class="btn btn-primary btn-sm" type="submit">
                             <i class="bi bi-search"></i>
                         </button>
@@ -73,14 +88,18 @@ function resaltar($texto, $busqueda) {
             </div>
 
             <!-- MENSAJE DE RESULTADOS -->
-            <?php if (!empty($busqueda)): ?>
+            <?php if (!empty($busqueda) || !empty($fecha)): ?>
                 <?php if ($total > 0): ?>
                     <div class="alert alert-info text-center">
-                    Se encontraron <strong><?= $total ?></strong> artículo(s) con: <strong><?= htmlspecialchars($busqueda) ?></strong>
+                        Se encontraron <strong><?= $total ?></strong> artículo(s) 
+                        <?php if ($busqueda): ?> con "<strong><?= htmlspecialchars($busqueda) ?></strong>"<?php endif; ?>
+                        <?php if ($fecha): ?> en la fecha <strong><?= htmlspecialchars($fecha) ?></strong><?php endif; ?>
                     </div>
                 <?php else: ?>
                     <div class="alert alert-warning text-center">
-                        No se encontraron artículos con: <strong><?= htmlspecialchars($busqueda) ?></strong>
+                        No se encontraron artículos
+                        <?php if ($busqueda): ?> con: "<strong><?= htmlspecialchars($busqueda) ?></strong>"<?php endif; ?>
+                        <?php if ($fecha): ?> en la fecha <strong><?= htmlspecialchars($fecha) ?></strong><?php endif; ?>
                     </div>
                 <?php endif; ?>
             <?php endif; ?>
@@ -117,5 +136,15 @@ function resaltar($texto, $busqueda) {
         <footer class="bg-dark text-white text-center py-3 mt-5">
             <p class="mb-0">© <?= date("Y") ?> Realidad en Red - Todos los derechos reservados</p>
         </footer>
+
+        <script>
+            window.onload = function() {
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.has('buscar') || urlParams.has('fecha')) {
+                    document.querySelector('input[name="buscar"]').value = "";
+                    document.querySelector('input[name="fecha"]').value = "";
+                }
+            }
+        </script>
     </body>
 </html>
