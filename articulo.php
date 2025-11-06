@@ -27,6 +27,31 @@ function colorCategoria($categoria) {
         default => 'secondary',  // gris
     };
 }
+
+// ==================================
+// ARTÍCULOS RELACIONADOS
+// ==================================
+$relacionados = [];
+
+if (isset($articulo)) {
+    $categoria = $conn->real_escape_string($articulo['categoria']);
+    $fecha = date("Y-m-d", strtotime($articulo['fecha']));
+
+    // Buscar artículos de la misma categoría y día (sin incluir el actual)
+    $sqlRelacionados = "
+        SELECT id, titulo, imagen, categoria, fecha
+        FROM articulos
+        WHERE id != $id
+        AND (categoria = '$categoria' OR DATE(fecha) = '$fecha')
+        ORDER BY fecha DESC
+        LIMIT 4
+    ";
+
+    $resultadoRel = $conn->query($sqlRelacionados);
+    if ($resultadoRel && $resultadoRel->num_rows > 0) {
+        $relacionados = $resultadoRel->fetch_all(MYSQLI_ASSOC);
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -85,6 +110,35 @@ function colorCategoria($categoria) {
                         <a href="index.php" class="btn btn-secondary btn-sm"><i class="bi bi-arrow-left"></i> Volver</a>
                     </div>
                 </div>
+
+                <!-- ARTÍCULOS RELACIONADOS -->
+                <?php if (!empty($relacionados)): ?>
+                    <h4 class="text-center mb-4">📰 Artículos relacionados</h4>
+                    <div class="row">
+                        <?php foreach ($relacionados as $rel): ?>
+                            <div class="col-md-3 mb-4">
+                                <div class="card h-100 shadow-sm border-0">
+                                    <?php if (!empty($rel['imagen'])): ?>
+                                        <img src="<?= htmlspecialchars($rel['imagen']) ?>" class="card-img-top" alt="<?= htmlspecialchars($rel['titulo']) ?>" style="height: 160px; object-fit: cover;">
+                                    <?php endif; ?>
+                                    <div class="card-body">
+                                        <span class="badge bg-<?= colorCategoria($rel['categoria']) ?> mb-2">
+                                            <?= htmlspecialchars($rel['categoria']) ?>
+                                        </span>
+                                        <h6 class="card-title">
+                                            <a href="articulo.php?id=<?= $rel['id'] ?>" class="text-decoration-none text-dark">
+                                                <?= htmlspecialchars($rel['titulo']) ?>
+                                            </a>
+                                        </h6>
+                                        <p class="text-muted small mb-0">
+                                            <i class="bi bi-calendar"></i> <?= date("d/m/Y", strtotime($rel['fecha'])) ?>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
             <?php endif; ?>
         </div>
 
