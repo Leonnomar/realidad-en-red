@@ -91,6 +91,7 @@ $resultado = $conn->query("SELECT * FROM articulos ORDER BY fecha DESC");
                         <tr>
                             <th>ID</th>
                             <th>Título</th>
+                            <th>Categoría</th>
                             <th>Contenido</th>
                             <th>Imagen</th>
                             <th>Fecha</th>
@@ -101,7 +102,12 @@ $resultado = $conn->query("SELECT * FROM articulos ORDER BY fecha DESC");
                         <?php while ($fila = $resultado->fetch_assoc()): ?>
                             <tr>
                                 <td><?= $fila['id'] ?></td>
-                                <td><?= $fila['titulo'] ?></td>
+                                <td><?= htmlspecialchars($fila['titulo']) ?></td>
+                                <td>
+                                    <span class="badge bg-info text-dark">
+                                        <?= htmlspecialchars($fila['categoria']) ?>
+                                    </span>
+                                </td>
                                 <td><?= substr($fila['contenido'], 0, 50) ?>...</td>
                                 <td>
                                     <?php if (!empty($fila['imagen'])): ?>

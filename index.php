@@ -143,6 +143,7 @@ function resaltar($texto, $busqueda) {
                                     <img src="<?= htmlspecialchars($fila['imagen']) ?>" class="card-img-top" alt="<?= htmlspecialchars($fila['titulo']) ?>">
                                 <?php endif; ?>
                                 <div class="card-body">
+                                    <span class="badge bg-secondary mb-2"><?= htmlspecialchars($fila['categoria']) ?></span>
                                     <h5 class="card-title"><?= $titulo ?></h5>
                                     <p class="card-text"><?= $contenido ?>...</p>
                                     <p class="text-muted"><small><?= $fila['fecha'] ?></small></p>

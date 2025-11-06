@@ -18,6 +18,15 @@ if (!$resultado || $resultado->num_rows === 0) {
 } else {
     $articulo = $resultado->fetch_assoc();
 }
+
+function colorCategoria($categoria) {
+    return match (strtolower($categoria)) {
+        'policiaca' => 'danger', // rojo
+        'deporte' => 'success',  // verde
+        'sinaloa' => 'info',     // celeste
+        default => 'secondary',  // gris
+    };
+}
 ?>
 
 <!DOCTYPE html>
@@ -62,7 +71,14 @@ if (!$resultado || $resultado->num_rows === 0) {
                     <?php endif; ?>
                     <div class="card-body">
                         <h1 class="card-title mb-3 text-primary"><?= htmlspecialchars($articulo['titulo']) ?></h1>
-                        <p class="text-muted mb-3"><i class="bi bi-calendar"></i> Publicado el <?= date("d/m/Y H:i", strtotime($articulo['fecha'])) ?></p>
+                        <p class="mb-1">
+                            <span class="badge bg-<?= colorCategoria($fila['categoria']) ?>">
+                                <?= htmlspecialchars($articulo['categoria']) ?>
+                            </span>
+                        </p>
+                        <p class="text-muted mb-3">
+                            <i class="bi bi-calendar"></i> Publicado el <?= date("d/m/Y H:i", strtotime($articulo['fecha'])) ?>
+                        </p>
                         <div class="card-text" style="white-space: pre-line;"><?= nl2br(htmlspecialchars($articulo['contenido'])) ?></div>
                     </div>
                     <div class="card-footer bg-white text-center">

@@ -10,6 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $id = $_POST['id'];
     $titulo = mysqli_real_escape_string($conn, $_POST['titulo']);
     $contenido = mysqli_real_escape_string($conn, $_POST['contenido']);
+    $categoria = mysqli_real_escape_string($conn, $_POST['categoria']);
 
     // Buscar el artículo actual para saber si tiene imagen
     $sql = "SELECT imagen FROM articulos WHERE id = $id";
@@ -38,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Actualizar en BD
-    $sql_update = "UPDATE articulos SET titulo='$titulo', contenido='$contenido', imagen='$imagen_final' WHERE id=$id";
+    $sql_update = "UPDATE articulos SET titulo='$titulo', contenido='$contenido', categoria='$categoria', imagen='$imagen_final' WHERE id=$id";
     if (mysqli_query($conn, $sql_update)) {
         $_SESSION['alerta'] = ['tipo' => 'success', 'mensaje' => 'Artículo actualizado correctamente'];
     } else {

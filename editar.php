@@ -29,6 +29,7 @@ if (!$articulo) {
 // 3. Si se envía el formulario, actualizar datos
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $titulo = $_POST['titulo'];
+    $categoria = $_POST['categoria'];
     $contenido = $_POST['contenido'];
 
     // Manejo de imagen
@@ -45,8 +46,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Actualizar en la base de datos
-    $stmt = $conexion->prepare("UPDATE articulos SET titulo = ?, contenido = ?, imagen = ?, WHERE id = ?");
-    $stmt->bind_param("sssi", $titulo, $contenido, $imagen, $id);
+    $stmt = $conn->prepare("UPDATE articulos SET titulo = ?, categoria = ?, contenido = ?, imagen = ? WHERE id = ?");
+    $stmt->bind_param("ssssi", $titulo, $categoria, $contenido, $imagen, $id);
     $stmt->execute();
 
     header("Location: panel.php");
@@ -74,6 +75,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
         </nav>
         
+        <!-- FORMULARIO DE EDICIÓN -->
         <div class="container mt-5">
             <div class="row justify-content-center">
                 <div class="col-md-8">
@@ -86,23 +88,45 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <form action="actualizar.php" method="POST" enctype="multipart/form-data">
                                 <input type="hidden" name="id" value="<?= $articulo['id'] ?>">
 
+                                <!-- Título -->
                                 <div class="mb-3">
                                     <label for="titulo" class="form-label">Título:</label>
                                     <input type="text" class="form-control" id="titulo" name="titulo" value="<?= $articulo['titulo'] ?>" required>
                                 </div>
 
+                                <!-- Categoría -->
+                                <div class="mb-3">
+                                    <label for="categoria" class="form-label">Categoría:</label>
+                                    <select class="form-select" id="categoria" name="categoria" required>
+                                        <option value="">Selecciona una categoría</option>
+                                        <option value="Campo" <?= $articulo['categoria'] == 'Campo' ? 'selected' : '' ?>>Campo</option>
+                                        <option value="Deporte" <?= $articulo['categoria'] == 'Deporte' ? 'selected' : '' ?>>Deporte</option>
+                                        <option value="Editorial" <?= $articulo['categoria'] == 'Editorial' ? 'selected' : '' ?>>Editorial</option>
+                                        <option value="Guamuchil" <?= $articulo['categoria'] == 'Guamuchil' ? 'selected' : '' ?>>Guamuchil</option>
+                                        <option value="Internacional" <?= $articulo['categoria'] == 'Internacional' ? 'selected' : '' ?>>Internacional</option>
+                                        <option value="Policiaca" <?= $articulo['categoria'] == 'Policiaca' ? 'selected' : '' ?>>Policiaca</option>
+                                        <option value="Politica" <?= $articulo['categoria'] == 'Politica' ? 'selected' : '' ?>>Política</option>
+                                        <option value="Sinaloa" <?= $articulo['categoria'] == 'Sinaloa' ? 'selected' : '' ?>>Sinaloa</option>
+                                        <option value="Sociales" <?= $articulo['categoria'] == 'Sociales' ? 'selected' : '' ?>>Sociales</option>
+                                    </select>
+                                </div>
+
+                                <!-- Contenido -->
                                 <div class="mb-3">
                                     <label for="contenido" class="form-label">Contenido:</label>
                                     <textarea class="form-control" id="contenido" name="contenido" rows="5" required><?= $articulo['contenido'] ?></textarea>
                                 </div>
 
+                                <!-- Imagen -->
                                 <div class="mb-3">
                                     <label for="imagen" class="form-label">Imagen:</label>
                                     <input type="file" class="form-control" id="imagen" name="imagen" accept="image/*">
                                     <small class="text-muted">Si no seleccionas una, se mantendrá la actual</small>
-                                    <div class="mt-2">
-                                        <img src="img/<?= $articulo['imagen'] ?>" alt="Imagen actual" width="150" class="rounded shadow">
-                                    </div>
+                                    <?php if (!empty($articulo['imagen'])): ?>
+                                        <div class="mt-3 text-center">
+                                            <img src="img/<?= htmlspecialchars($articulo['imagen']) ?>" alt="Imagen actual" width="150" class="rounded shadow-sm border">
+                                        </div>
+                                    <?php endif; ?>
                                 </div>
 
                                 <button type="submit" class="btn btn-primary w-100">Guardar Cambios</button>

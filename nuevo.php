@@ -44,6 +44,22 @@ if (!isset($_SESSION['usuario'])) {
                                 </div>
 
                                 <div class="mb-3">
+                                    <label for="categoria" class="form-label">Categoría:</label>
+                                    <select class="form-select" id="categoria" name="categoria" required>
+                                        <option value="">Selecciona una categoría</option>
+                                        <option value="Campo">Campo</option>
+                                        <option value="Deporte">Deporte</option>
+                                        <option value="Editorial">Editorial</option>
+                                        <option value="Guamuchil">Guamuchil</option>
+                                        <option value="Internacional">Internacional</option>
+                                        <option value="Policiaca">Policiaca</option>
+                                        <option value="Politica">Política</option>
+                                        <option value="Sinaloa">Sinaloa</option>
+                                        <option value="Sociales">Sociales</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
                                     <label for="contenido" class="form-label">Contenido:</label>
                                     <textarea class="form-control" id="contenido" name="contenido" rows="6" required></textarea>
                                 </div>
@@ -61,7 +77,5 @@ if (!isset($_SESSION['usuario'])) {
                 </div>
             </div>
         </div>
-
-       
     </body>
 </html>

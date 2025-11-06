@@ -2,6 +2,7 @@
 include 'conexion.php';
 
 $titulo = $_POST['titulo'];
+$categoria = $_POST['categoria'];
 $contenido = $_POST['contenido'];
 $fecha = date("Y-m-d H:i:s");
 
@@ -21,9 +22,9 @@ if (!empty($_FILES['imagen']['name'])) {
     move_uploaded_file($_FILES["imagen"]["tmp_name"], $imagen);
 }
 
-$sql = "INSERT INTO articulos (titulo, contenido, imagen, fecha) VALUES (?, ?, ?, ?)";
+$sql = "INSERT INTO articulos (titulo, categoria, contenido, imagen, fecha) VALUES (?, ?, ?, ?, ?)";
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("ssss", $titulo, $contenido, $imagen, $fecha);
+$stmt->bind_param("sssss", $titulo, $categoria, $contenido, $imagen, $fecha);
 $stmt->execute();
 
 header("Location: index.php");
