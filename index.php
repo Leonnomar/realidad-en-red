@@ -8,13 +8,14 @@ $where = [];
 $sql = "SELECT * FROM articulos";
 $fechasPublicadas = [];
 
+// Obtener fechas con publicaciones
 $resFechas = $conn->query("SELECT DISTINCT DATE(fecha) as fecha FROM articulos");
 while ($row = $resFechas->fetch_assoc()) {
     $fechasPublicadas[] = $row['fecha'];
 }
 
 // Si hay texto
-if (isset($_GET['buscar']) && !empty($_GET['buscar'])) {
+if (isset($_GET['buscar']) && !empty(trim($_GET['buscar']))) {
     $busqueda = trim($_GET['buscar']);
     $busquedaSQL = $conn->real_escape_string($busqueda);
     $where[] = "(titulo LIKE '%$busquedaSQL%' OR contenido LIKE '%$busquedaSQL%')";
@@ -35,12 +36,15 @@ $sql .= " ORDER BY fecha DESC";
 
 // Ejecutar la consulta
 $resultado = $conn->query($sql);
-$total = $resultado->num_rows;
+$total = $resultado ? $resultado->num_rows : 0;
 
 //Función para resaltar conicidencias
 function resaltar($texto, $busqueda) {
-    if (!$busqueda) return htmlspecialchars($texto);
-    return preg_replace("/(" . preg_quote($busqueda, '/') . ")/i", "<mark>$1</mark>", htmlspecialchars($texto));
+    $textoEsc = htmlspecialchars($texto);
+    if (!$busqueda) return $textoEsc;
+    // Escapar la  búsqueda para usar en regex (en su forma HTML)
+    $busquedaEsc = preg_quote(htmlspecialchars($busqueda), '/');
+    return preg_replace("/($busquedaEsc)/i", "<mark>$1</mark>", $textoEsc);
 }
 ?>
 
@@ -81,11 +85,11 @@ function resaltar($texto, $busqueda) {
             <!-- FORMULARIO DE BUSQUEDA -->
             <div class="container my-3">
                 <form method="GET" action="index.php" class="d-flex justify-content-end">
-                    <div class="col-auto">
+                    <div class="col-auto me-2">
                         <input type="text" name="buscar" class="form-control form-control-sm" placeholder="Buscar" value="<?= htmlspecialchars($busqueda) ?>">
                     </div>
-                    <div class="col-auto">
-                        <input type="text" id="fecha" name="fecha" class="form-control form-control-sm" placeholder="Selecciona fecha">
+                    <div class="col-auto me-2">
+                        <input type="text" id="fecha" name="fecha" class="form-control form-control-sm" placeholder="Selecciona fecha" value="<?= htmlspecialchars($fecha) ?>">
                     </div>
                     <div class="col-auto">
                         <button class="btn btn-primary btn-sm" type="submit">
@@ -99,22 +103,35 @@ function resaltar($texto, $busqueda) {
             <?php if (!empty($busqueda) || !empty($fecha)): ?>
                 <?php if ($total > 0): ?>
                     <div class="alert alert-info text-center">
-                        Se encontraron <strong><?= $total ?></strong> artículo(s) 
-                        <?php if ($busqueda): ?> con "<strong><?= htmlspecialchars($busqueda) ?></strong>"<?php endif; ?>
-                        <?php if ($fecha): ?> en la fecha <strong><?= htmlspecialchars($fecha) ?></strong><?php endif; ?>
+                        <?php if (!empty($busqueda) && !empty($fecha)): ?>
+                            Se encontraron <strong><?= $total ?></strong> artículo(s) con la palabra
+                            "<strong><?= htmlspecialchars($busqueda) ?></strong>" en la fecha
+                            <strong><?= date("d/m/Y", strtotime($fecha)) ?></strong>.
+                        <?php elseif (!empty($busqueda)): ?>
+                            Se encontraron <strong><?= $total ?></strong> artículo(s) con la palabra:
+                            "<strong><?= htmlspecialchars($busqueda) ?></strong>".
+                        <?php else: /* sólo fecha */ ?>
+                            Estos son los artículos del día <strong><?= date("d/m/Y", strtotime($fecha)) ?></strong>
+                            (<?= $total ?> encontrado<?= $total > 1 ? "s" : "" ?>).
+                        <?php endif; ?>
                     </div>
                 <?php else: ?>
                     <div class="alert alert-warning text-center">
-                        No se encontraron artículos
-                        <?php if ($busqueda): ?> con: "<strong><?= htmlspecialchars($busqueda) ?></strong>"<?php endif; ?>
-                        <?php if ($fecha): ?> en la fecha <strong><?= htmlspecialchars($fecha) ?></strong><?php endif; ?>
+                        <?php if (!empty($busqueda) && !empty($fecha)): ?>
+                            No se encontraron artículos con la palabra "<strong><?= htmlspecialchars($busqueda) ?></strong>"
+                            en la fecha <strong><?= date("d/m/Y", strtotime($fecha)) ?></strong>.
+                        <?php elseif (!empty($busqueda)): ?>
+                            No se encontraron artículos con la palabra: "<strong><?= htmlspecialchars($busqueda) ?></strong>".
+                        <?php else: ?> 
+                            No hay artículos en la fecha <strong><?= date("d/m/Y", strtotime($fecha)) ?></strong>.
+                        <?php endif; ?>
                     </div>
                 <?php endif; ?>
             <?php endif; ?>
 
             <!-- LISTA DE ARTÍCULOS -->
             <div class="row g-4">
-                <?php if ($resultado->num_rows > 0): ?>
+                <?php if ($resultado && $resultado->num_rows > 0): ?>
                     <?php while ($fila = $resultado->fetch_assoc()): ?>
                         <?php 
                             $titulo = resaltar($fila['titulo'], $busqueda);
@@ -123,7 +140,7 @@ function resaltar($texto, $busqueda) {
                         <div class="col-md-4">
                             <div class="card shadow-sm h-100">
                                 <?php if (!empty($fila['imagen'])): ?>
-                                    <img src="<?= $fila['imagen'] ?>" class="card-img-top" alt="<?= htmlspecialchars($fila['titulo']) ?>">
+                                    <img src="<?= htmlspecialchars($fila['imagen']) ?>" class="card-img-top" alt="<?= htmlspecialchars($fila['titulo']) ?>">
                                 <?php endif; ?>
                                 <div class="card-body">
                                     <h5 class="card-title"><?= $titulo ?></h5>
@@ -158,6 +175,7 @@ function resaltar($texto, $busqueda) {
 
                 flatpickr("#fecha", {
                     dateFormat: "Y-m-d",
+                    defaultDate: "<?= $fecha ? htmlspecialchars($fecha) : '' ?>",
                     disable: [
                         function(date) {
                             // Deshabilita días que NO estén en publicaciones
@@ -171,6 +189,11 @@ function resaltar($texto, $busqueda) {
                             dayElem.style.backgroundColor = "#0d6efd"; // azul bootstrap
                             dayElem.style.color = "white";
                             dayElem.style.borderRadius = "50%";
+                        }
+                    },
+                    onChange: function(selectedDates, dateStr, instance) {
+                        if (dateStr) {
+                            document.querySelector('form').submit();
                         }
                     }
                 });
