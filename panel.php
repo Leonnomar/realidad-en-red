@@ -95,6 +95,9 @@ $resultado = $conn->query("SELECT * FROM articulos ORDER BY fecha DESC");
                             <th>Contenido</th>
                             <th>Imagen</th>
                             <th>Fecha</th>
+                            <?php if ($_SESSION['rol'] === 'admin'): ?>
+                                <th>Autor</th>
+                            <?php endif; ?>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -115,6 +118,9 @@ $resultado = $conn->query("SELECT * FROM articulos ORDER BY fecha DESC");
                                     <?php endif; ?>
                                 </td>
                                 <td><?= $fila['fecha'] ?></td>
+                                <?php if ($_SESSION['rol'] === 'admin'): ?>
+                                    <td><?= htmlspecialchars($fila['autor']) ?></td>
+                                <?php endif; ?>
                                 <td>
                                     <a class="btn btn-warning btn-sm" href="editar.php?id=<?= $fila['id'] ?>">✏️ Editar</a>
                                     <form action="borrar.php" method="POST" style="display:inline;">

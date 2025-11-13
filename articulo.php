@@ -101,8 +101,9 @@ if (isset($articulo)) {
                                 <?= htmlspecialchars($articulo['categoria']) ?>
                             </span>
                         </p>
-                        <p class="text-muted mb-3">
-                            <i class="bi bi-calendar"></i> Publicado el <?= date("d/m/Y H:i", strtotime($articulo['fecha'])) ?>
+                        <p class="text-muted">
+                            Publicado por <strong><?= htmlspecialchars($articulo['autor']) ?></strong>
+                            | Fecha: <?= date("d/m/Y H:i", strtotime($articulo['fecha'])) ?>
                         </p>
                         <div class="card-text" style="white-space: pre-line;"><?= nl2br(htmlspecialchars($articulo['contenido'])) ?></div>
                     </div>

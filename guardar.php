@@ -1,10 +1,15 @@
 <?php
 include 'conexion.php';
 
+if (!isset($_SESSION['usuario'])) {
+    die("Error: No hay usuario en sesión.");
+}
+
 $titulo = $_POST['titulo'];
 $categoria = $_POST['categoria'];
 $contenido = $_POST['contenido'];
 $fecha = date("Y-m-d H:i:s");
+$autor = $_SESSION['usuario'];
 
 // Validación
 if (empty($titulo) || empty($contenido)) {
@@ -22,9 +27,10 @@ if (!empty($_FILES['imagen']['name'])) {
     move_uploaded_file($_FILES["imagen"]["tmp_name"], $imagen);
 }
 
-$sql = "INSERT INTO articulos (titulo, categoria, contenido, imagen, fecha) VALUES (?, ?, ?, ?, ?)";
+// Guardar en la base de datos
+$sql = "INSERT INTO articulos (titulo, categoria, contenido, imagen, fecha, autor) VALUES (?, ?, ?, ?, ?, ?)";
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("sssss", $titulo, $categoria, $contenido, $imagen, $fecha);
+$stmt->bind_param("ssssss", $titulo, $categoria, $contenido, $imagen, $fecha, $autor);
 $stmt->execute();
 
 header("Location: index.php");
