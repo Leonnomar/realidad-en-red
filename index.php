@@ -28,6 +28,12 @@ if (isset($_GET['fecha']) && !empty($_GET['fecha'])) {
     $where[] = "DATE(fecha) = '$fechaSQL'";
 }
 
+// Filtro por categoría
+if (isset($_GET['categoria']) && !empty($_GET['categoria'])) {
+    $categoria = $conn->real_escape_string($_GET['categoria']);
+    $where[] = "categoria = '$categoria'";
+}
+
 // Armar query final
 if (!empty($where)) {
     $sql .= " WHERE " . implode(" AND ", $where);
@@ -45,6 +51,13 @@ function resaltar($texto, $busqueda) {
     // Escapar la  búsqueda para usar en regex (en su forma HTML)
     $busquedaEsc = preg_quote(htmlspecialchars($busqueda), '/');
     return preg_replace("/($busquedaEsc)/i", "<mark>$1</mark>", $textoEsc);
+}
+
+//Obtener categorías automáticamente
+$categoria = [];
+$resCat = $conn->query("SELECT DISTINCT categoria FROM articulos ORDER BY categoria ASC");
+while ($row = $resCat->fetch_assoc()) {
+    $categoria[] = $row["categoria"];
 }
 ?>
 
@@ -65,14 +78,54 @@ function resaltar($texto, $busqueda) {
         <!-- NAVBAR -->
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <div class="container">
+
+                <!-- LOGO -->
                 <a class="navbar-brand fw-bold" href="index.php">🌐 Realidad en Red</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+
+                <!-- BOTON RESPOSIVE -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
+
+                <div class="collapse navbar-collapse" id="navbarMain">
                     <ul class="navbar-nav ms-auto">
-                        <li class="nav-item"><a class="nav-link active" href="index.php">Inicio</a></li>
-                        <li class="nav-item"><a class="nav-link" href="login.php">Iniciar Sesión</a></li>
+
+                        <!-- INICIO -->
+                        <li class="nav-item">
+                            <a class="nav-link <?= basename($_SERVER['PHP_SELF'])=='index.php' ? 'active' : '' ?>"
+                            href="index.php">Inicio</a>
+                        </li>
+
+                        <!-- CATEGORIAS DESPEGABLES -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="catDropdown" role="button" data-bs-toggle="dropdown">
+                                Categorías
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-dark">
+                                <?php foreach ($categoria as $cat): ?>
+                                    <li>
+                                        <a class="dropdown-item" href="index.php?categoria=<?= urlencode($cat) ?>">
+                                            <?= htmlspecialchars($cat) ?>
+                                        </a>
+                                    </li>
+                                <?php endforeach; ?>
+                            </ul>
+                        </li>
+
+                        <!-- CONTACTO -->
+                        <li class="nav-item">
+                            <a class="nav-link" href="contacto.php">Contacto</a>
+                        </li>
+
+                        <!-- ACERCA DE -->
+                        <li class="nav-item">
+                            <a class="nav-link" href="acerca.php">Acerca de</a>
+                        </li>
+
+                        <!-- LOGIN -->
+                        <li class="nav-item">
+                            <a class="nav-link" href="login.php">Iniciar Sesión</a>
+                        </li>
                     </ul>
                 </div>
             </div>
