@@ -88,6 +88,12 @@ $resCat = $conn->query("SELECT DISTINCT categoria FROM articulos ORDER BY catego
                     </div>
                 </div>
 
+                <?php if (isset($_GET['enviado'])): ?>
+                    <div class="alert alert-success text-center">
+                        Tu mensaje se envió correctamente. ¡Gracias por contactarnos!
+                    </div>
+                <?php endif; ?>
+
                 <!-- FORMULARIO DE CONTACTO -->
                 <div class="col-md-7">
                     <div class="card shadow">
