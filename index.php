@@ -119,7 +119,7 @@ while ($row = $resCat->fetch_assoc()) {
 
                         <!-- ACERCA DE -->
                         <li class="nav-item">
-                            <a class="nav-link" href="acerca.php">Acerca de</a>
+                            <a class="nav-link" href="acercade.php">Acerca de</a>
                         </li>
 
                         <!-- LOGIN -->
