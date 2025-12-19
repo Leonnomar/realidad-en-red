@@ -11,12 +11,14 @@ $resCat = $conn->query("SELECT DISTINCT categoria FROM articulos ORDER BY catego
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Acerca de - Realidad en Red</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
         <style>
             body {
-                background-color: #0b1d33;
-                color: white;
+                background-color: #ffffff;
+                color: #212529;
             }
             .logo-crop {
                 width: 100%;
@@ -35,6 +37,13 @@ $resCat = $conn->query("SELECT DISTINCT categoria FROM articulos ORDER BY catego
             .text-box {
                 font-size: 1.1rem;
                 line-height: 1.7;
+            }
+            .social-icons a {
+                transition: transform 0.2s ease, opacity 0.2s ease;
+            }
+            .social-icons a:hover {
+                transform: scale(1.2);
+                opacity: 0.8;
             }
         </style>
     </head>
@@ -98,7 +107,7 @@ $resCat = $conn->query("SELECT DISTINCT categoria FROM articulos ORDER BY catego
 
             <h1 class="text-center mb-4">Quiénes Somos</h1>
 
-            <div class="card bg-dark text-light shadow-lg p-4">
+            <div class="card bg-light text-dark shadow-lg p-4">
                 <div class="card-body text-box">
 
                     <p>En la actualidad, con el crecimiento exponencial de la tecnología, gran parte del tiempo de las personas está dedicado a la conectividad en internet y las diversas redes sociales.</p>
@@ -111,15 +120,20 @@ $resCat = $conn->query("SELECT DISTINCT categoria FROM articulos ORDER BY catego
 
                     <p>Creemos firmemente en una relación franca, cordial y duradera con nuestro público. Este proyecto nace con esa convicción.</p>
 
-                    <hr class="border-light">
+                    <hr class="border-dark">
 
                     <h4 class="mt-4 text-center">Síguenos en redes</h4>
-                    <div class="text-center">
-                        <a href="#" class="me-3">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" width="40">
+                    <div class="text-center social-icons">
+                        <a href="https://www.facebook.com/realidadenred" aria-label="Facebook">
+                            <i class="fab fa-facebook fa-2x" style="color:#1877f2;"></i>
                         </a>
-                        <a href="#">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/9/96/Twitter_logo.svg" width="40">
+
+                        <a href="https://x.com/realidadenlared" aria-label="X">
+                            <i class="fab fa-x-twitter fa-2x" style="color:#000;"></i>
+                        </a>
+
+                        <a href="https://www.youtube.com/channel/UCsJaxLZfwhHxJkjmwqwl3qA?view_as=subscriber" aria-label="YouTube">
+                            <i class="fab fa-youtube fa-2x" style="color:#ff0000;"></i>
                         </a>
                     </div>
 
