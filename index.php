@@ -5,7 +5,7 @@ include 'conexion.php';
 $busqueda = "";
 $fecha = "";
 $where = [];
-$sql = "SELECT * FROM articulos";
+$sql = "SELECT a.*, c.color FROM articulos a LEFT JOIN categorias c ON a.categoria = c.nombre";
 $fechasPublicadas = [];
 
 // Obtener fechas con publicaciones
@@ -54,10 +54,10 @@ function resaltar($texto, $busqueda) {
 }
 
 //Obtener categorías automáticamente
-$categoria = [];
-$resCat = $conn->query("SELECT DISTINCT categoria FROM articulos ORDER BY categoria ASC");
+$categorias = [];
+$resCat = $conn->query("SELECT nombre, color FROM categorias ORDER BY nombre ASC");
 while ($row = $resCat->fetch_assoc()) {
-    $categoria[] = $row["categoria"];
+    $categorias[] = $row;
 }
 ?>
 
@@ -102,10 +102,11 @@ while ($row = $resCat->fetch_assoc()) {
                                 Categorías
                             </a>
                             <ul class="dropdown-menu dropdown-menu-dark">
-                                <?php foreach ($categoria as $cat): ?>
+                                <?php foreach ($categorias as $cat): ?>
                                     <li>
-                                        <a class="dropdown-item" href="index.php?categoria=<?= urlencode($cat) ?>">
-                                            <?= htmlspecialchars($cat) ?>
+                                        <a class="dropdown-item" href="index.php?categoria=<?= urlencode($cat['nombre']) ?>">
+                                            <span class="badge bg-<? $cat['color'] ?> me-2"></span>
+                                            <?= htmlspecialchars($cat['nombre']) ?>
                                         </a>
                                     </li>
                                 <?php endforeach; ?>
@@ -196,7 +197,9 @@ while ($row = $resCat->fetch_assoc()) {
                                     <img src="<?= htmlspecialchars($fila['imagen']) ?>" class="card-img-top" alt="<?= htmlspecialchars($fila['titulo']) ?>">
                                 <?php endif; ?>
                                 <div class="card-body">
-                                    <span class="badge bg-secondary mb-2"><?= htmlspecialchars($fila['categoria']) ?></span>
+                                    <span class="badge bg-<?= $fila['color'] ?? 'secondary' ?> mb-2">
+                                        <?= htmlspecialchars($fila['categoria']) ?>
+                                    </span>
                                     <h5 class="card-title"><?= $titulo ?></h5>
                                     <p class="card-text"><?= $contenido ?>...</p>
                                     <p class="text-muted"><small><?= $fila['fecha'] ?></small></p>

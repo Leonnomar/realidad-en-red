@@ -1,4 +1,7 @@
 <?php
+include 'conexion.php';
+
+$categorias = $conn->query("SELECT nombre FROM categorias ORDER BY nombre ASC");
 // nuevo.php
 session_start();
 
@@ -45,18 +48,26 @@ if (!isset($_SESSION['usuario'])) {
 
                                 <div class="mb-3">
                                     <label for="categoria" class="form-label">Categoría:</label>
-                                    <select class="form-select" id="categoria" name="categoria" required>
+                                    <select class="form-select" id="categoria" name="categoria"required onchange="toggleNuevaCategoria()">
                                         <option value="">Selecciona una categoría</option>
-                                        <option value="Campo">Campo</option>
-                                        <option value="Deporte">Deporte</option>
-                                        <option value="Editorial">Editorial</option>
-                                        <option value="Guamuchil">Guamuchil</option>
-                                        <option value="Internacional">Internacional</option>
-                                        <option value="Policiaca">Policiaca</option>
-                                        <option value="Politica">Política</option>
-                                        <option value="Sinaloa">Sinaloa</option>
-                                        <option value="Sociales">Sociales</option>
+
+                                        <?php while ($cat = $categorias->fetch_assoc()): ?>
+                                            <option value="<?= htmlspecialchars($cat['nombre']) ?>">
+                                                <?= htmlspecialchars($cat['nombre']) ?>
+                                            </option>
+                                        <?php endwhile; ?>
+
+                                        <?php if ($_SESSION['rol'] === 'admin'): ?>
+                                            <option value="otra">➕ Otra (crear nueva)</option>
+                                        <?php endif; ?>
                                     </select>
+
+                                    <?php if ($_SESSION['rol'] === 'admin'): ?>
+                                        <div class="mb-3 d-none" id="nuevaCategoriaBox">
+                                            <label class="form-label">Nueva categoría:</label>
+                                            <input type="text" class="form-control" name="nueva_categoria" placeholder="Ej: Tecnología">
+                                        </div>
+                                    <?php endif; ?>
                                 </div>
 
                                 <div class="mb-3">
@@ -77,5 +88,18 @@ if (!isset($_SESSION['usuario'])) {
                 </div>
             </div>
         </div>
+
+        <script>
+            function toggleNuevaCategoria() {
+                const select = document.getElementById('categoria');
+                const box = document.getElementById('nuevaCategoriaBox');
+
+                if (select.value === 'otra') {
+                    box.classList.remove('d-none');
+                } else {
+                    box.classList.add('d-none');
+                }
+            }
+        </script>
     </body>
 </html>

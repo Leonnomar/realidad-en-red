@@ -10,22 +10,13 @@ if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
 $id = (int) $_GET['id'];
 
 // Consultar el artículo
-$sql = "SELECT * FROM articulos WHERE id = $id LIMIT 1";
+$sql = "SELECT a.*, c.color FROM articulos a LEFT JOIN categorias c ON a.categoria = c.nombre WHERE a.id = $id LIMIT 1";
 $resultado = $conn->query($sql);
 
 if (!$resultado || $resultado->num_rows === 0) {
     $error = "El artículo no existe o fue eliminado.";
 } else {
     $articulo = $resultado->fetch_assoc();
-}
-
-function colorCategoria($categoria) {
-    return match (strtolower($categoria)) {
-        'policiaca' => 'danger', // rojo
-        'deporte' => 'success',  // verde
-        'sinaloa' => 'info',     // celeste
-        default => 'secondary',  // gris
-    };
 }
 
 // ==================================
@@ -39,11 +30,12 @@ if (isset($articulo)) {
 
     // Buscar artículos de la misma categoría y día (sin incluir el actual)
     $sqlRelacionados = "
-        SELECT id, titulo, imagen, categoria, fecha
-        FROM articulos
-        WHERE id != $id
-        AND (categoria = '$categoria' OR DATE(fecha) = '$fecha')
-        ORDER BY fecha DESC
+        SELECT a.id, a.titulo, a.imagen, a.categoria, a.fecha, c.color
+        FROM articulos a
+        LEFT JOIN categorias c ON a.categoria = c.nombre
+        WHERE a.id != $id
+        AND (a.categoria = '$categoria' OR DATE(a.fecha) = '$fecha')
+        ORDER BY a.fecha DESC
         LIMIT 4
     ";
 
@@ -97,7 +89,7 @@ if (isset($articulo)) {
                     <div class="card-body">
                         <h1 class="card-title mb-3 text-primary"><?= htmlspecialchars($articulo['titulo']) ?></h1>
                         <p class="mb-1">
-                            <span class="badge bg-<?= colorCategoria($fila['categoria']) ?>">
+                            <span class="badge bg-<?= $articulo['color'] ?? 'secondary' ?>">
                                 <?= htmlspecialchars($articulo['categoria']) ?>
                             </span>
                         </p>
@@ -123,7 +115,7 @@ if (isset($articulo)) {
                                         <img src="<?= htmlspecialchars($rel['imagen']) ?>" class="card-img-top" alt="<?= htmlspecialchars($rel['titulo']) ?>" style="height: 160px; object-fit: cover;">
                                     <?php endif; ?>
                                     <div class="card-body">
-                                        <span class="badge bg-<?= colorCategoria($rel['categoria']) ?> mb-2">
+                                        <span class="badge bg-<?= $rel['color'] ?? 'secondary' ?> mb-2">
                                             <?= htmlspecialchars($rel['categoria']) ?>
                                         </span>
                                         <h6 class="card-title">

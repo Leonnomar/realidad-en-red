@@ -49,7 +49,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         <div class="card shadow-lg p-4" style="max-width: 400px; width: 100%;">
             <h2 class="text-center text-primary mb-4">🔐 Iniciar Sesión</h2>
 
-            <?php if (isset($error)): ?>
+            <?php if (!empty($error)): ?>
                 <div class="alert alert-danger text-center">
                     <?= $error ?>
                 </div>

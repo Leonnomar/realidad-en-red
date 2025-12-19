@@ -2,7 +2,7 @@
 include 'conexion.php';
 
 // Obtener categorías dinámicamente para el menú
-$resCat = $conn->query("SELECT DISTINCT categoria FROM articulos ORDER BY categoria ASC");
+$resCat = $conn->query("SELECT nombre FROM categorias ORDER BY nombre ASC");
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -72,8 +72,8 @@ $resCat = $conn->query("SELECT DISTINCT categoria FROM articulos ORDER BY catego
                             <ul class="dropdown-menu dropdown-menu-dark">
                                 <?php while ($cat = $resCat->fetch_assoc()): ?>
                                 <li>
-                                    <a class="dropdown-item" href="index.php?categoria=<?= urlencode($cat['categoria']) ?>">
-                                        <?= htmlspecialchars($cat['categoria']) ?>
+                                    <a class="dropdown-item" href="index.php?categoria=<?= urlencode($cat['nombre']) ?>">
+                                        <?= htmlspecialchars($cat['nombre']) ?>
                                     </a>
                                 </li>
                                 <?php endwhile; ?>
