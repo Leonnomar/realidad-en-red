@@ -1,6 +1,10 @@
 <?php
 include 'conexion.php';
 
+// Categorías para Navbar
+$sqlCat = "SELECT nombre FROM categorias ORDER BY nombre ASC";
+$resCat = $conn->query($sqlCat);
+
 // Verificar si se pasó un ID válido
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
     header("Location: index.php");
@@ -55,20 +59,57 @@ if (isset($articulo)) {
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+        <style>
+            .bg-realidad {
+               background: #080924; 
+            }
+        </style>
     </head>
 
     <body class="bg-light">
         <!-- NAVBAR -->
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <nav class="navbar navbar-expand-lg bg-realidad">
             <div class="container">
-                <a class="navbar-brand fw-bold" href="index.php">🌐 Realidad en Red</a>
+                <a class="navbar-brand" href="index.php">
+                    <img src="img/logo_barra.png" alt="Realidad en Red" height="45">
+                </a>
+
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                     <span class="navbar-toggler-icon"></span>
                 </button>
+
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto">
-                        <li class="nav-item"><a class="nav-link" href="index.php">Inicio</a></li>
-                        <li class="nav-item"><a class="nav-link" href="login.php">Iniciar Sesión</a></li>
+
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="index.php">Inicio</a>
+                        </li>
+
+                        <!-- CATEGORÍAS DINÁMICAS -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-white" data-bs-toggle="dropdown">Categorías</a>
+                            <ul class="dropdown-menu dropdown-menu-dark">
+                                <?php while ($cat = $resCat->fetch_assoc()): ?>
+                                <li>
+                                    <a class="dropdown-item" href="index.php?categoria=<?= urlencode($cat['nombre']) ?>">
+                                        <?= htmlspecialchars($cat['nombre']) ?>
+                                    </a>
+                                </li>
+                                <?php endwhile; ?>
+                            </ul>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="contacto.php">Contacto</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link active text-white" href="acercade.php">Nosotros</a>
+                        </li>
+
+                        <li class="nav-item text-white">
+                            <a class="nav-link" href="login.php">Iniciar Sesión</a>
+                        </li>
                     </ul>
                 </div>
             </div>

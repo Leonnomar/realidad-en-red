@@ -45,15 +45,20 @@ $resCat = $conn->query("SELECT nombre FROM categorias ORDER BY nombre ASC");
                 transform: scale(1.2);
                 opacity: 0.8;
             }
+            .bg-realidad {
+                background: #080924;
+            }
         </style>
     </head>
 
     <body>
 
         <!-- NAVBAR -->
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <nav class="navbar navbar-expand-lg bg-realidad">
             <div class="container">
-                <a class="navbar-brand fw-bold" href="index.php">🌐 Realidad en Red</a>
+                <a class="navbar-brand" href="index.php">
+                    <img src="img/logo_barra.png" alt="Realidad en Red" height="45">
+                </a>
 
                 <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                     <span class="navbar-toggler-icon"></span>
@@ -63,12 +68,12 @@ $resCat = $conn->query("SELECT nombre FROM categorias ORDER BY nombre ASC");
                     <ul class="navbar-nav ms-auto">
 
                         <li class="nav-item">
-                            <a class="nav-link" href="index.php">Inicio</a>
+                            <a class="nav-link text-white" href="index.php">Inicio</a>
                         </li>
 
                         <!-- CATEGORÍAS DINÁMICAS -->
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Categorías</a>
+                            <a class="nav-link dropdown-toggle text-white" data-bs-toggle="dropdown">Categorías</a>
                             <ul class="dropdown-menu dropdown-menu-dark">
                                 <?php while ($cat = $resCat->fetch_assoc()): ?>
                                 <li>
@@ -81,15 +86,15 @@ $resCat = $conn->query("SELECT nombre FROM categorias ORDER BY nombre ASC");
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link active" href="acercade.php">Quiénes somos</a>
+                            <a class="nav-link text-white" href="contacto.php">Contacto</a>
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link" href="contacto.php">Contacto</a>
+                            <a class="nav-link active text-white" href="acercade.php">Nosotros</a>
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link" href="login.php">Iniciar Sesión</a>
+                            <a class="nav-link text-white" href="login.php">Iniciar Sesión</a>
                         </li>
 
                     </ul>

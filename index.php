@@ -72,15 +72,23 @@ while ($row = $resCat->fetch_assoc()) {
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
         <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+        <style>
+            .bg-realidad {
+                background: #080924;
+            }
+        </style>
     </head>
+
     <body class="bg-light">
 
         <!-- NAVBAR -->
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <nav class="navbar navbar-expand-lg bg-realidad">
             <div class="container">
 
                 <!-- LOGO -->
-                <a class="navbar-brand fw-bold" href="index.php">🌐 Realidad en Red</a>
+                <a class="navbar-brand" href="index.php">
+                    <img src="img/logo_barra.png" alt="Realidad en Red" height="45">
+                </a>
 
                 <!-- BOTON RESPOSIVE -->
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
@@ -92,13 +100,13 @@ while ($row = $resCat->fetch_assoc()) {
 
                         <!-- INICIO -->
                         <li class="nav-item">
-                            <a class="nav-link <?= basename($_SERVER['PHP_SELF'])=='index.php' ? 'active' : '' ?>"
+                            <a class="nav-link text-white <?= basename($_SERVER['PHP_SELF'])=='index.php' ? 'active' : '' ?>"
                             href="index.php">Inicio</a>
                         </li>
 
                         <!-- CATEGORIAS DESPEGABLES -->
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="catDropdown" role="button" data-bs-toggle="dropdown">
+                            <a class="nav-link text-white dropdown-toggle" href="#" id="catDropdown" role="button" data-bs-toggle="dropdown">
                                 Categorías
                             </a>
                             <ul class="dropdown-menu dropdown-menu-dark">
@@ -115,17 +123,17 @@ while ($row = $resCat->fetch_assoc()) {
 
                         <!-- CONTACTO -->
                         <li class="nav-item">
-                            <a class="nav-link" href="contacto.php">Contacto</a>
+                            <a class="nav-link text-white" href="contacto.php">Contacto</a>
                         </li>
 
                         <!-- ACERCA DE -->
                         <li class="nav-item">
-                            <a class="nav-link" href="acercade.php">Acerca de</a>
+                            <a class="nav-link text-white" href="acercade.php">Nosotros</a>
                         </li>
 
                         <!-- LOGIN -->
                         <li class="nav-item">
-                            <a class="nav-link" href="login.php">Iniciar Sesión</a>
+                            <a class="nav-link text-white" href="login.php">Iniciar Sesión</a>
                         </li>
                     </ul>
                 </div>
